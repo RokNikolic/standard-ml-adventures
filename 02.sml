@@ -140,8 +140,14 @@ val toList_result = toList(Node(7, Node(2, Leaf 8, Leaf 3), Leaf 5))
  * - Listi so uravnoteženi po definiciji.
  *)
 fun isBalanced (tree : tree) : bool =
-    true
+    case tree of
+        (Leaf _) => true 
+        | Node (_, l, r) =>
+            abs(height(l) - height(r)) <= 1 
+            andalso isBalanced(l) 
+            andalso isBalanced(r)
 
+val isBalanced_result = isBalanced(Node(7, Node(2, Leaf 8, Node(3, Leaf 2, Leaf 4)), Leaf 5))
 
 (* Vrne true, če je drevo binarno iskalno drevo:
  * - Vrednosti levega poddrevesa so strogo manjši od vrednosti vozlišča.
@@ -150,4 +156,30 @@ fun isBalanced (tree : tree) : bool =
  * - Listi so binarna iskalna drevesa po definiciji.
  *)
 fun isBST (tree : tree) : bool =
-    true
+    let
+        fun check_subtree_lesser(tree: tree, node_value) =
+            case tree of
+                (Leaf value) => value < node_value
+                | Node (value, l, r) =>
+                    value < node_value 
+                    andalso check_subtree_lesser(l, node_value)
+                    andalso check_subtree_lesser(r, node_value)
+        
+        fun check_subtree_greater(tree: tree, node_value) =
+            case tree of
+                (Leaf value) => value > node_value
+                | Node (value, l, r) =>
+                    value > node_value 
+                    andalso check_subtree_lesser(l, node_value)
+                    andalso check_subtree_lesser(r, node_value)
+    in
+    case tree of
+        (Leaf _) => true
+        | Node (value, l, r) =>
+            check_subtree_lesser(l, value) 
+            andalso check_subtree_greater(r, value)
+            andalso isBST(l)
+            andalso isBST(r)
+    end
+
+val isBST_result = isBST(Node(7, Node(2, Leaf 8, Node(3, Leaf 2, Leaf 4)), Leaf 5))
