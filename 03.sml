@@ -67,5 +67,12 @@ fun seznamParov (x::xs, y::ys) =
 val result_seznamParov = seznamParov([1,2,3], ["a", "b", "c", "d"]);
 
 fun zip(x : 'a list, y : 'b list) : ('a, 'b) list = 
-    if hd a = 0 orelse hd b = 0 then
+    case 
+
+    if hd x = 0 orelse hd y = 0 then
+        0
+    else
+        (hd x, hd y)::zip(tl x, tl y)
+        
+val result_zip = zip([1,2,3], ["a", "b", "c", "d"])
         
