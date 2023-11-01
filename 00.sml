@@ -1,5 +1,3 @@
-(* val _ = print "Hello, World\n"; *)
-
 (* Vrne naslednika števila `n`. *)
 fun next (n : int) : int =
     n + 1

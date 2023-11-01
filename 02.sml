@@ -24,6 +24,7 @@ fun vrednostKarte ((s, _) : karta) : int =
 (* Numbers *)
 datatype number = Zero | Succ of number | Pred of number
 
+(* Simplifies unary number *)
 fun simp Zero = Zero
     | simp (Pred x) =
         (case simp x of Succ y => y
