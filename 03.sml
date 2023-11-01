@@ -1,4 +1,4 @@
-datatype ('prvi, 'drugi) seznamParov = Prazen | Element of 'prvi * 'drugi * ('prvi, 'drugi) seznamParov;  
+(* datatype ('prvi, 'drugi) seznamParov = Prazen | Element of 'prvi * 'drugi * ('prvi, 'drugi) seznamParov;  
 type 'a multiMnozica = ('a, int) seznamParov;
 
 fun seznamParov (x::xs, y::ys) = 
@@ -31,7 +31,7 @@ map(fn x=> x mod 2 = 1, [1,2,3,4,5]);
 append([1,2,3],[4,5,6]);
 
 
-(* funkcija za izračun časa izvajanja funkcije f : unit -> 'a *)
+(* funkcija za izračun časa izvajanja funkcije f : unit -> 'a
 fun timeIt f =
     let val timer = Timer.startCPUTimer ()
       val _ = f ()
@@ -51,7 +51,7 @@ val rez2 = f2 ();
 
 (* časi izvajanja v milisekundah *)
 val ms1 = timeIt f1;
-val ms2 = timeIt f2;
+val ms2 = timeIt f2; *) *)
 
 (* Za oddajo *)
 datatype natural = Succ of natural | One;
@@ -60,19 +60,15 @@ exception NotNaturalNumber;
 datatype 'a bstree = br of 'a bstree * 'a * 'a bstree | lf;
 datatype direction = L | R;
 
-fun seznamParov (x::xs, y::ys) = 
-    Element (x, y, seznamParov(xs, ys)) 
-    | seznamParov _ = Prazen;
-
-val result_seznamParov = seznamParov([1,2,3], ["a", "b", "c", "d"]);
-
 fun zip(x : 'a list, y : 'b list) : ('a, 'b) list = 
-    case 
+    let
+        fun zip_helper(x : 'a list, y : 'b list, accumulate : ('a, 'b) list) =
+			accumulat (hd x, hd y)
+			zip_helper(tl x, tl y)
 
-    if hd x = 0 orelse hd y = 0 then
-        0
-    else
-        (hd x, hd y)::zip(tl x, tl y)
+    in
+    zip_helper(x, y, [])
+    end
         
 val result_zip = zip([1,2,3], ["a", "b", "c", "d"])
         
