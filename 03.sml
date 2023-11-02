@@ -45,10 +45,14 @@ val result_zip = zip([1,2,3], ["a", "b", "c", "d"])
 
 (*Unzip list*)
 fun unzip(x) = 
-    case x of
-        [] => []
-        | x::xs => [x[0]::unzip xs, x[1]:: unzip xs]
-        | _ => []
+    let
+        fun unzip_helper (x, first, second) =
+            case (x) of
+            ([]) => (first, second)
+            | _ => case (hd x) of (i, s) => unzip_helper(tl x, first@[i], second@[s])
+    in
+        unzip_helper(x, [], [])
+    end
 	    
 val result_unzip = unzip([(1,"a"),(2,"b"),(3,"c")])
         

@@ -97,20 +97,15 @@ val insert_result = insert([1,2,3,4], 4, 99)
 (*  Vrne nov seznam, ki je tak kot vhodni, le da so vse pojavitve elementa x odstranjene. *)
 fun delete (xs : int list, x : int) : int list =
     let
-        fun obrni (list_in : int list, list_temp : int list): int list =
-                if null list_in then
-                    list_temp
-                else
-                    obrni(tl list_in, hd list_in :: list_temp)
-        fun delete_and_reverse (list_in : int list, list_temp : int list): int list =
+        fun delete_helper (list_in : int list, list_temp : int list): int list =
             if null list_in then
                 list_temp
             else if hd list_in <> x then
-                delete_and_reverse(tl list_in, hd list_in :: list_temp)
+                delete_helper (tl list_in, list_temp@[hd list_in])
             else
-                delete_and_reverse(tl list_in, list_temp)
+                delete_helper (tl list_in, list_temp)
     in
-        obrni(delete_and_reverse(xs, []), [])
+        delete_helper (xs, [])
     end
 
 val delete_result = delete([1,2,3,4,5], 3)
