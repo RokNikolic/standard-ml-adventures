@@ -1,15 +1,3 @@
-fun foldl (f, z, s1::s) = foldl(f, f(z, s1), s)
-  |foldl(_, z, []) = z
-
-fun foldr(f, z, s) = foldr (f, z, foldr(fn (z, si) => si::z, [], s))
-
-fun filter(f, s) = foldr(fn(z, si) => if f si then si::z else z, [], s)
-
-foldl (fn (z,x) => x + 1 :: z, [], [1,2,3]);
-foldr (fn (z,x) => x + 1 :: z, [], [1,2,3]);
-
-filter(fn x=> x mod 2 = 1, [1,2,3,4,5]);
-
 (* Zip 2 lists *)
 fun zip(x, y) = 
     case (x, y) of
@@ -79,17 +67,10 @@ fun filter (f, s) =
 val filter_result = filter ((fn x => x = 1), [1, 2, 1, 4])
 
 (* Fold *)
-fun fold (f, z, s) = 
-	case (f, z, s) of
-		(_, _, []) => []
-		| (f, z, x::xs) => f (x) :: fold (f, xs)
-
-val fold_result = fold ((fn x => x * 2), [1, 2, 3, 4]);
-
 fun fold (f, z, s1::s) = fold(f, f(z, s1), s)
   	|fold(_, z, []) = z
 
-val fold_result = fold ((fn x => x * 2), 2, [1, 2, 3, 4]);
+val fold_result = fold (fn (x, y) => x + y , 0, [1, 2, 3, 4]);
 
 (* Trees...again *)
 datatype 'a bstree = br of 'a bstree * 'a * 'a bstree | lf;
