@@ -3,24 +3,12 @@ fun foldl (f, z, s1::s) = foldl(f, f(z, s1), s)
 
 fun foldr(f, z, s) = foldr (f, z, foldr(fn (z, si) => si::z, [], s))
 
-fun map(f, s) = foldr(fn(z,si) => f si::z, [], s)
-
 fun filter(f, s) = foldr(fn(z, si) => if f si then si::z else z, [], s)
 
-fun append(xs, ys) = foldr(fn(z, x) => x::z, ys, xs);
-
-(*
 foldl (fn (z,x) => x + 1 :: z, [], [1,2,3]);
 foldr (fn (z,x) => x + 1 :: z, [], [1,2,3]);
 
 filter(fn x=> x mod 2 = 1, [1,2,3,4,5]);
-map(fn x=> x mod 2 = 1, [1,2,3,4,5]);
-append([1,2,3],[4,5,6]);
-*)
-
-(* Tasks *)
-datatype 'a bstree = br of 'a bstree * 'a * 'a bstree | lf;
-datatype direction = L | R;
 
 (* Zip 2 lists *)
 fun zip(x, y) = 
@@ -37,7 +25,7 @@ fun unzip(x) =
         fun unzip_helper (x, first, second) =
             case (x) of
             ([]) => (first, second)
-            | _ => case (hd x) of (i, s) => unzip_helper(tl x, first@[i], second@[s])
+            | _ => case (hd x) of (i, s) => unzip_helper(tl x, first @ [i], second @ [s])
     in
         unzip_helper(x, [], [])
     end
@@ -56,3 +44,53 @@ fun subtract (a, b) =
         | (Succ x, Succ y) => subtract(x, y)
 
 val subtract_result = subtract(Succ (Succ (Succ (Succ One))), Succ (Succ One));
+
+(* Any *)
+fun any (f, s) =
+    case (f, s) of
+        (_, []) => false
+        | (f, x::xs) => if f (x) then 
+							true
+						else any (f, xs)
+
+val any_result = any ((fn x => x = 5), [3, 2, 1, 4])
+
+(* Map *)
+fun map (f, s) =
+	case (f, s) of
+		(_, []) => []
+		| (f, x::xs) => f (x) :: map (f, xs)
+
+val map_result = map ((fn x => x + 1), [1, 2, 3, 4]);
+
+(* Filter *)
+fun filter (f, s) =
+	let
+		fun filter_helper (f, s, accumulate) =
+			case (f, s) of
+				(_, []) => accumulate
+				| (f, x::xs) => if f (x) then 
+									filter_helper (f, xs, accumulate @ [x])
+								else filter_helper (f, xs, accumulate)
+	in
+		filter_helper(f, s, [])
+	end
+
+val filter_result = filter ((fn x => x = 1), [1, 2, 1, 4])
+
+(* Fold *)
+fun fold (f, z, s) = 
+	case (f, z, s) of
+		(_, _, []) => []
+		| (f, z, x::xs) => f (x) :: fold (f, xs)
+
+val fold_result = fold ((fn x => x * 2), [1, 2, 3, 4]);
+
+fun fold (f, z, s1::s) = fold(f, f(z, s1), s)
+  	|fold(_, z, []) = z
+
+val fold_result = fold ((fn x => x * 2), 2, [1, 2, 3, 4]);
+
+(* Trees...again *)
+datatype 'a bstree = br of 'a bstree * 'a * 'a bstree | lf;
+datatype direction = L | R;
