@@ -1,4 +1,3 @@
-(* Zip 2 lists *)
 fun zip(x, y) = 
     case (x, y) of
         ([], []) => []
@@ -7,7 +6,6 @@ fun zip(x, y) =
 	    
 val zip_result = zip([1,2,3], ["a", "b", "c", "d"])
 
-(* Unzip list *)
 fun unzip(x) = 
     let
         fun unzip_helper (x, first, second) =
@@ -24,7 +22,6 @@ val unzip_result = unzip([(1,"a"),(2,"b"),(3,"c")])
 datatype natural = Succ of natural | One;
 exception NotNaturalNumber;
 
-(* Subtract natural numbers a - b*)
 fun subtract (a, b) = 
     case (a, b) of
         (One, _) => raise NotNaturalNumber
@@ -33,7 +30,6 @@ fun subtract (a, b) =
 
 val subtract_result = subtract(Succ (Succ (Succ (Succ One))), Succ (Succ One));
 
-(* Any *)
 fun any (f, s) =
     case (f, s) of
         (_, []) => false
@@ -43,7 +39,6 @@ fun any (f, s) =
 
 val any_result = any ((fn x => x = 5), [3, 2, 1, 4])
 
-(* Map *)
 fun map (f, s) =
 	case (f, s) of
 		(_, []) => []
@@ -51,7 +46,6 @@ fun map (f, s) =
 
 val map_result = map ((fn x => x + 1), [1, 2, 3, 4]);
 
-(* Filter *)
 fun filter (f, s) =
 	let
 		fun filter_helper (f, s, accumulate) =
@@ -66,7 +60,6 @@ fun filter (f, s) =
 
 val filter_result = filter ((fn x => x = 1), [1, 2, 1, 4])
 
-(* Fold *)
 fun fold (f, z, s1::s) = fold(f, f(z, s1), s)
   	|fold(_, z, []) = z
 
