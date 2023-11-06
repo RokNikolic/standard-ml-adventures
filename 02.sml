@@ -1,27 +1,4 @@
-datatype stopnja = As | Kralj | Kraljica | Fant | Stevilka of int
-datatype barva = Kriz | Pik | Srce | Karo
-
-type karta = stopnja * barva
-
-(* Kakšne barve je karta? *)
-fun barvaKarte ((_, b): karta) : barva =
-    b
-
-(* Ali je karta veljavna? *)
-fun veljavnaKarta ((s, _) : karta) : bool =
-    case s of
-        Stevilka i => i <= 10 andalso i >= 2
-        | (As | Kralj | Kraljica | Fant) => true
-    
-
-(* Koliko je vredna karta? *)
-fun vrednostKarte ((s, _) : karta) : int =
-    case s of 
-        Stevilka i => i
-        | As => 11
-        | (Kralj | Kraljica | Fant) => 10
-
-(* Numbers *)
+(* Unary Numbers *)
 datatype number = Zero | Succ of number | Pred of number
 
 (* Simplifies unary number *)
@@ -33,7 +10,7 @@ fun simp Zero = Zero
         (case simp x of Pred y => y
         | y => Succ y)
 
-(* Negira število a. Pretvorba v int ni dovoljena! *)
+
 fun neg (a : number) : number =
     case a of 
         Zero => Zero
@@ -42,15 +19,14 @@ fun neg (a : number) : number =
 
 val neg_result = neg(Pred (Succ (Succ (Pred (Pred Zero)))));
 
-(* Vrne vsoto števil a in b. Pretvorba v int ni dovoljena! *)
 fun add (a : number, b : number) : number =
     case a of
         Zero => b
         | Succ x => add(x, Succ(b))
         | Pred x => add(x, Pred(b))
 
-(* Vrne rezultat primerjave števil a in b. Pretvorba v int ter uporaba funkcij `add` in `neg` ni dovoljena!
-    namig: uporabi funkcijo simp *)
+val add_result = add(Pred Zero,  Succ (Pred Zero))
+
 fun comp (a : number, b : number) : order =
     let 
         fun compare (values) : order =
@@ -74,7 +50,6 @@ datatype tree = Node of int * tree * tree | Leaf of int;
 fun min (Leaf x) = x
 | min (Node (x, l, r)) = Int.min(x, Int.min(min l, min r))
 
-(* Vrne true, če drevo vsebuje element x. *)
 fun contains (tree : tree, x : int) : bool =
     case tree of 
         Leaf i => i = x
@@ -85,7 +60,6 @@ fun contains (tree : tree, x : int) : bool =
 
 val contains_result = contains(Node(4, Node(2, Leaf 1, Leaf 3), Leaf 5), 6)
 
-(* Vrne število listov v drevesu. *)
 fun countLeaves (tree : tree) : int =
     let
         fun counter (tree: tree, count: int) : int =
@@ -99,7 +73,6 @@ fun countLeaves (tree : tree) : int =
 
 val countLeaves_result = countLeaves(Node(4, Node(2, Leaf 1, Leaf 3), Node(3, Leaf 6, Leaf 8)))
 
-(* Vrne število število vej v drevesu. *)
 fun countBranches (tree : tree) : int =
     let
         fun counter (tree: tree, count: int) : int =
@@ -113,7 +86,6 @@ fun countBranches (tree : tree) : int =
 
 val countBranches_result = countBranches(Node(4, Node(2, Leaf 1, Leaf 3), Leaf 5))
 
-(* Vrne višino drevesa. Višina lista je 1. *)
 fun height (tree : tree) : int =
     let
         fun counter (tree: tree, count: int) : int =
@@ -127,7 +99,6 @@ fun height (tree : tree) : int =
 
 val height_result = height(Node(4, Node(2, Leaf 1, Node(7, Leaf 3, Leaf 2)), Node(3, Leaf 6, Leaf 8)))
 
-(* Pretvori drevo v seznam z vmesnim prehodom (in-order traversal). *)
 fun toList (tree : tree) : int list =
     case tree of 
         Leaf value => [value] 
@@ -135,11 +106,6 @@ fun toList (tree : tree) : int list =
 
 val toList_result = toList(Node(7, Node(2, Leaf 8, Leaf 3), Leaf 5))
 
-(* Vrne true, če je drevo uravnoteženo:
- * - Obe poddrevesi sta uravnoteženi.
- * - Višini poddreves se razlikujeta kvečjemu za 1.
- * - Listi so uravnoteženi po definiciji.
- *)
 fun isBalanced (tree : tree) : bool =
     case tree of
         (Leaf _) => true 
@@ -150,12 +116,7 @@ fun isBalanced (tree : tree) : bool =
 
 val isBalanced_result = isBalanced(Node(7, Node(2, Leaf 8, Node(3, Leaf 2, Leaf 4)), Leaf 5))
 
-(* Vrne true, če je drevo binarno iskalno drevo:
- * - Vrednosti levega poddrevesa so strogo manjši od vrednosti vozlišča.
- * - Vrednosti desnega poddrevesa so strogo večji od vrednosti vozlišča.
- * - Obe poddrevesi sta binarni iskalni drevesi.
- * - Listi so binarna iskalna drevesa po definiciji.
- *)
+(* Binary search tree *)
 fun isBST (tree : tree) : bool =
     let
         fun check_subtree_lesser(tree: tree, node_value) =
