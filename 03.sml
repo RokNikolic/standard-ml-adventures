@@ -30,6 +30,7 @@ fun subtract (a, b) =
 
 val subtract_result = subtract(Succ (Succ (Succ (Succ One))), Succ (Succ One));
 
+(* Elementary higher order functions *)
 fun any (f, s) =
     case (f, s) of
         (_, []) => false
@@ -60,8 +61,10 @@ fun filter (f, s) =
 
 val filter_result = filter ((fn x => x = 1), [1, 2, 1, 4])
 
-fun fold (f, z, s1::s) = fold(f, f(z, s1), s)
-  	|fold(_, z, []) = z
+fun fold (f, acc, sez) = 
+    case sez of
+        [] => acc
+        | glava::rep => fold(f, f(glava, acc), rep)
 
 val fold_result = fold (fn (x, y) => x + y , 0, [1, 2, 3, 4]);
 
