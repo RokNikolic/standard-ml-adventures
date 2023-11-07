@@ -61,6 +61,7 @@ fun filter (f, s) =
 
 val filter_result = filter ((fn x => x = 1), [1, 2, 1, 4])
 
+(* Reduce *)
 fun fold (f, acc, sez) = 
     case sez of
         [] => acc
