@@ -67,7 +67,7 @@ fun fold (f, acc, sez) =
         [] => acc
         | glava::rep => fold(f, f(glava, acc), rep)
 
-val fold_result = fold (fn (x, y) => x + y , 0, [1, 2, 3, 4]);
+val fold_result = fold (fn (x, y) => x + y , 0, [1, 2, 3, 4])
 
 (* Trees...again *)
 datatype 'a bstree = br of 'a bstree * 'a * 'a bstree | lf;
