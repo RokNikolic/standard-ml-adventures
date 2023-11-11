@@ -1,16 +1,4 @@
 (* Currying examples *)
-val f1 : int -> int -> int = 
-    fn x => 
-        fn y => 
-            x * y;
-
-fun f2 x = 
-    fn y => 
-        x * y;
-
-fun f3 x y = 
-    x * y;
-
 val curry : ('a * 'b -> 'c) -> 'a -> 'b -> 'c =
     fn f => 
         fn x => 
@@ -60,8 +48,7 @@ val bestString : (string * string -> bool) -> string list -> string =
 
 val bestString_result = bestString (fn (x, y) => x > y) ["t", "te", "test", "tes"]
 
-(* Vrne leksikografsko največji niz. Uporabite bestString. *)
-(* Returns the largest string according to alphabetical ordering. Use bestString. *)
+(* Returns the largest string according to alphabetical ordering. *)
 val largestString : string list -> string =
     fn string_list =>
         bestString (fn (x, y) => x > y) string_list
@@ -89,19 +76,10 @@ val rec quicksort : ('a * 'a -> order) -> 'a list -> 'a list =
 
 val quicksort_result = quicksort (Int.compare) [1, 6, 9, 3, 6, 2, 12, 15, 3, 5]
 
-val rec better_quicksort : ('a * 'a -> order) -> 'a list -> 'a list =
-    fn f => fn array =>
-        case array of
-            [] => []
-            | array => 
-                let 
-                    val pivot = List.last(array)
-                    val lesser = List.filter (fn x => (f (x, pivot) = LESS )) array
-                    val equal = List.filter (fn x => (f (x, pivot) = EQUAL)) array
-                    val greater = List.filter (fn x => (f (x, pivot) = GREATER)) array
-                in
-                    better_quicksort f lesser @ equal @ [pivot] @ better_quicksort f greater
-                end
+(* Dot product using List.foldl and ListPair.map. *)
+val dot : int list -> int list -> int =
+    fn list1 => fn list2 =>
+        List.foldl (fn (x, acc) => x + acc) 0 (ListPair.map (fn (x, y) => x * y) (list1, list2))
 
-val better_quicksort_result = better_quicksort (Int.compare) [1, 6, 9, 3, 6, 2, 12, 15, 3, 5]
+val dot_result = dot [2, 3, 4, 5] [1, 6, 9, 3]
 
