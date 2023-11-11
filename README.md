@@ -3,4 +3,4 @@
 
 - Implementing progressively harder concepts and problems in the ways of functional programming.
 
-- Extensivly using recursion, polymorphism and higher order functions .
+- Extensively using recursion, polymorphism, higher order functions and currying.
