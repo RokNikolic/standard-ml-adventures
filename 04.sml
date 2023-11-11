@@ -70,9 +70,9 @@ val largestString_result = largestString ["t", "te", "test", "tes"]
 
 val longestString : string list -> string =
     fn string_list =>
-        bestString (fn (x, y) => x > y) string_list
+        bestString (fn (x, y) => String.size x > String.size y) string_list
 
-val longestString_result = longestString ["t", "te", "test", "tes"]
+val longestString_result = longestString ["t", "tessssss", "test", "tes"]
 
 val rec quicksort : ('a * 'a -> order) -> 'a list -> 'a list =
     fn f => fn array =>
