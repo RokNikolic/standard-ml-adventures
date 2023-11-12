@@ -95,10 +95,26 @@ val transpose_result = transpose [[1,2],[4,5],[7,8]]
 (* Multiplies two matrices. Uses dot and transpose. *)
 val multiply : int list list -> int list list -> int list list =
     fn matrix1 => fn matrix2 =>
-        let 
-            val matrix2_transposed = transpose matrix2
-        in
-            List.map (fn rows => List.map (fn columns => dot rows columns) matrix2_transposed) matrix1
-        end
+        List.map (fn rows => List.map (fn columns => dot rows columns) (transpose matrix2)) matrix1
 
 val multiply_result = multiply [[1,2,3],[4,5,6],[7,8,9]] [[4,3,5],[6,3,2],[2,3,1]]
+
+(* Counts successive equal elements and returns a list of pairs (value, count). The unix tool uniq -c works similarly. *)
+val group : ''a list -> (''a * int) list =
+    fn list => 
+        let
+            fun group_helper inner_list last_element count=
+                case inner_list of
+                    [] => (last_element, count) :: []
+                    | head::tail => 
+                        if head = last_element then
+                            group_helper tail head (count + 1)
+                        else
+                            (last_element, count) :: group_helper tail head (1)
+        in
+            group_helper list (hd list) 0
+        end
+
+val group_result = group ["1", "1", "1", "3", "3", "2"]
+
+
