@@ -84,19 +84,13 @@ val dot : int list -> int list -> int =
 val dot_result = dot [2, 3, 4, 5] [1, 6, 9, 3]
 
 (* Transpose of matrix *)
-val transpose : 'a list list -> 'a list list =
-    fn list =>
-        let
-            fun transpose_counter list_in counter max =
-                if counter = max then
-                    []
-                else
-                    List.map (fn x => List.nth(x, counter)) list_in :: (transpose_counter list_in (counter + 1) max)
-        in
-        transpose_counter list 0 (List.length list)
-        end
+val rec transpose : 'a list list -> 'a list list =
+    fn matrix =>
+        case List.nth(matrix, 0) of
+            [] => []
+            | _ => List.map (fn row => hd row) matrix :: transpose (List.map (fn row => tl row) matrix)
 
-val transpose_result = transpose [[1,2,3],[4,5,6],[7,8,9]]
+val transpose_result = transpose [[1,2],[4,5],[7,8]]
 
 (* Multiplies two matrices. Uses dot and transpose. *)
 val multiply : int list list -> int list list -> int list list =
