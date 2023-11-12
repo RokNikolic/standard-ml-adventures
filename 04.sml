@@ -97,3 +97,14 @@ val transpose : 'a list list -> 'a list list =
         end
 
 val transpose_result = transpose [[1,2,3],[4,5,6],[7,8,9]]
+
+(* Multiplies two matrices. Uses dot and transpose. *)
+val multiply : int list list -> int list list -> int list list =
+    fn matrix1 => fn matrix2 =>
+        let 
+            val matrix2_transposed = transpose matrix2
+        in
+            List.map (fn rows => List.map (fn columns => dot rows columns) matrix2_transposed) matrix1
+        end
+
+val multiply_result = multiply [[1,2,3],[4,5,6],[7,8,9]] [[4,3,5],[6,3,2],[2,3,1]]
