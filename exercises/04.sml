@@ -120,8 +120,20 @@ val group : ''a list -> (''a * int) list =
 val group_result = group ["1", "1", "1", "3", "3", "2"]
 
 (* Sorts the elements from a list into equivalence classes. The equivalence relation is given with a function f, which returns true, if two elements are equivalent. *)
-val equivalenceClasses : ('a -> 'a -> bool) -> 'a list -> 'a list list =
+val equivalenceClasses =
     fn f => fn list =>
-        List.filter (fn x => f x "y") list
+        let
+            fun equivalenceClasses_helper inner_list last_element =
+                case inner_list of
+                    [] => []
+                    | head::tail => 
+                        if head = last_element then
+                            equivalenceClasses_helper tail head
+                        else
+                            List.filter (fn x => f x head) inner_list :: equivalenceClasses_helper tail head
+                        
+        in
+            equivalenceClasses_helper list (List.last list)
+        end
 
-val equivalenceClasses_result = equivalenceClasses (fn (x, y) => x = y) ["1", "1", "1", "3", "3", "2"]
+val equivalenceClasses_result = equivalenceClasses (fn x => fn y => x = y) ["1", "1", "1", "3", "3", "2"]
