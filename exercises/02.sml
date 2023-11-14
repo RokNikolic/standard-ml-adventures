@@ -1,5 +1,5 @@
 (* Unary Numbers *)
-datatype number = Zero | Succ of number | Pred of number
+datatype number = Zero | Succ of number | Pred of number ;
 
 (* Simplifies unary number *)
 fun simp Zero = Zero
@@ -25,7 +25,7 @@ fun add (a : number, b : number) : number =
         | Succ x => add(x, Succ(b))
         | Pred x => add(x, Pred(b))
 
-val add_result = add(Pred Zero,  Succ (Pred Zero))
+val add_result = add(Pred Zero,  Succ (Pred Zero));
 
 fun comp (a : number, b : number) : order =
     let 
@@ -42,7 +42,7 @@ fun comp (a : number, b : number) : order =
         compare(simp(a), simp(b))
     end
 
-val comp_result = comp(Pred (Succ (Succ (Pred (Pred Zero)))),  Succ (Pred (Succ (Pred Zero))))
+val comp_result = comp(Pred (Succ (Succ (Pred (Pred Zero)))),  Succ (Pred (Succ (Pred Zero))));
 
 (* Trees *)
 datatype tree = Node of int * tree * tree | Leaf of int;
@@ -58,7 +58,7 @@ fun contains (tree : tree, x : int) : bool =
             orelse contains(l, x)
             orelse contains(r, x)
 
-val contains_result = contains(Node(4, Node(2, Leaf 1, Leaf 3), Leaf 5), 6)
+val contains_result = contains(Node(4, Node(2, Leaf 1, Leaf 3), Leaf 5), 6);
 
 fun countLeaves (tree : tree) : int =
     let
@@ -71,7 +71,7 @@ fun countLeaves (tree : tree) : int =
         counter(tree, 0)
     end
 
-val countLeaves_result = countLeaves(Node(4, Node(2, Leaf 1, Leaf 3), Node(3, Leaf 6, Leaf 8)))
+val countLeaves_result = countLeaves(Node(4, Node(2, Leaf 1, Leaf 3), Node(3, Leaf 6, Leaf 8)));
 
 fun countBranches (tree : tree) : int =
     let
@@ -84,7 +84,7 @@ fun countBranches (tree : tree) : int =
         counter(tree, 0)
     end
 
-val countBranches_result = countBranches(Node(4, Node(2, Leaf 1, Leaf 3), Leaf 5))
+val countBranches_result = countBranches(Node(4, Node(2, Leaf 1, Leaf 3), Leaf 5));
 
 fun height (tree : tree) : int =
     let
@@ -97,14 +97,14 @@ fun height (tree : tree) : int =
         counter(tree, 0)
     end
 
-val height_result = height(Node(4, Node(2, Leaf 1, Node(7, Leaf 3, Leaf 2)), Node(3, Leaf 6, Leaf 8)))
+val height_result = height(Node(4, Node(2, Leaf 1, Node(7, Leaf 3, Leaf 2)), Node(3, Leaf 6, Leaf 8)));
 
 fun toList (tree : tree) : int list =
     case tree of 
         Leaf value => [value] 
         | Node (value, l, r) => toList(l) @ [value] @ toList(r)
 
-val toList_result = toList(Node(7, Node(2, Leaf 8, Leaf 3), Leaf 5))
+val toList_result = toList(Node(7, Node(2, Leaf 8, Leaf 3), Leaf 5));
 
 fun isBalanced (tree : tree) : bool =
     case tree of
@@ -114,7 +114,7 @@ fun isBalanced (tree : tree) : bool =
             andalso isBalanced(l) 
             andalso isBalanced(r)
 
-val isBalanced_result = isBalanced(Node(7, Node(2, Leaf 8, Node(3, Leaf 2, Leaf 4)), Leaf 5))
+val isBalanced_result = isBalanced(Node(7, Node(2, Leaf 8, Node(3, Leaf 2, Leaf 4)), Leaf 5));
 
 (* Binary search tree *)
 fun isBST (tree : tree) : bool =
@@ -144,4 +144,4 @@ fun isBST (tree : tree) : bool =
             andalso isBST(r)
     end
 
-val isBST_result = isBST(Node(7, Node(2, Leaf 8, Node(3, Leaf 2, Leaf 4)), Leaf 5))
+val isBST_result = isBST(Node(7, Node(2, Leaf 8, Node(3, Leaf 2, Leaf 4)), Leaf 5));

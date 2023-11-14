@@ -4,7 +4,7 @@ fun zip(x, y) =
         | (x::xs, y::ys) => (x, y) :: zip (xs, ys)
         | _ => []
 	    
-val zip_result = zip([1,2,3], ["a", "b", "c", "d"])
+val zip_result = zip([1,2,3], ["a", "b", "c", "d"]);
 
 fun unzip(x) = 
     let
@@ -16,7 +16,7 @@ fun unzip(x) =
         unzip_helper(x, [], [])
     end
 	    
-val unzip_result = unzip([(1,"a"),(2,"b"),(3,"c")])
+val unzip_result = unzip([(1,"a"),(2,"b"),(3,"c")]);
 
 (* Natural numbers *)
 datatype natural = Succ of natural | One;
@@ -38,7 +38,7 @@ fun any (f, s) =
 							true
 						else any (f, xs)
 
-val any_result = any ((fn x => x = 5), [3, 2, 1, 4])
+val any_result = any ((fn x => x = 5), [3, 2, 1, 4]);
 
 fun map (f, s) =
 	case (f, s) of
@@ -59,7 +59,7 @@ fun filter (f, s) =
 		filter_helper(f, s, [])
 	end
 
-val filter_result = filter ((fn x => x = 1), [1, 2, 1, 4])
+val filter_result = filter ((fn x => x = 1), [1, 2, 1, 4]);
 
 (* Reduce *)
 fun fold (f, acc, sez) = 
@@ -67,7 +67,7 @@ fun fold (f, acc, sez) =
         [] => acc
         | glava::rep => fold(f, f(glava, acc), rep)
 
-val fold_result = fold (fn (x, y) => x + y , 0, [1, 2, 3, 4])
+val fold_result = fold (fn (x, y) => x + y , 0, [1, 2, 3, 4]);
 
 (* Trees...again *)
 datatype 'a bstree = br of 'a bstree * 'a * 'a bstree | lf;

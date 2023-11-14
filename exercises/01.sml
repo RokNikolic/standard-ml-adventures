@@ -9,7 +9,7 @@ fun factorial (n : int) : int =
         accumulate(n, 1)
     end
 
-val factorial_result = factorial(5)
+val factorial_result = factorial(5);
 
 fun power (x : int, n : int) : int =
     if n = 1 then 
@@ -19,7 +19,7 @@ fun power (x : int, n : int) : int =
     else
         x * power(x, n-1)
 
-val power_result = power(3, 5)
+val power_result = power(3, 5);
 
 (* Greatest common denominator *)
 fun gcd (a : int, b : int) : int =
@@ -28,7 +28,7 @@ fun gcd (a : int, b : int) : int =
     else 
         a
 
-val gcd_result = gcd(60, 50)
+val gcd_result = gcd(60, 50);
 
 fun len (xs: int list) : int =
     let 
@@ -41,7 +41,7 @@ fun len (xs: int list) : int =
         len_inner (xs, 0)
     end
 
-val len_result = len([1,1,1,1])
+val len_result = len([1,1,1,1]);
 
 fun last (xs : int list) : int option =
     if null xs then
@@ -57,7 +57,7 @@ fun last (xs : int list) : int option =
             SOME (hd (obrni (xs, [])))
         end
 
-val last_result = last([1,2,3,4])
+val last_result = last([1,2,3,4]);
 
 fun nth (xs : int list, n : int) : int option =
     let 
@@ -78,7 +78,7 @@ fun nth (xs : int list, n : int) : int option =
             SOME (hd ( remove_elements(xs, n)))
     end
 
-val nth_result = nth([1,2,3,4,5], 5)
+val nth_result = nth([1,2,3,4,5], 5);
 
 fun insert (xs : int list, n : int, x : int) : int list =
     if n = 0 then 
@@ -86,7 +86,7 @@ fun insert (xs : int list, n : int, x : int) : int list =
     else 
         hd xs :: insert(tl xs, n - 1, x)
 
-val insert_result = insert([1,2,3,4], 4, 99)
+val insert_result = insert([1,2,3,4], 4, 99);
 
 fun delete (xs : int list, x : int) : int list =
     let
@@ -101,7 +101,7 @@ fun delete (xs : int list, x : int) : int list =
         delete_helper (xs, [])
     end
 
-val delete_result = delete([1,2,3,4,5], 3)
+val delete_result = delete([1,2,3,4,5], 3);
 
 fun reverse (xs : int list) : int list =
     let
@@ -114,7 +114,7 @@ fun reverse (xs : int list) : int list =
         obrni(xs, [])
     end
 
-val reverse_result = reverse([1,2,3])
+val reverse_result = reverse([1,2,3]);
 
 fun palindrome (xs : int list) : bool =
     let
@@ -127,4 +127,4 @@ fun palindrome (xs : int list) : bool =
         xs = (obrni(xs, []))
     end
 
-val palindrom_result = palindrome([1,2,1])
+val palindrom_result = palindrome([1,2,1]);
