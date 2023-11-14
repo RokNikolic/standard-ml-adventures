@@ -123,17 +123,21 @@ val group_result = group ["1", "1", "1", "3", "3", "2"];
 val equivalenceClasses : ('a -> 'a -> bool) -> 'a list -> 'a list list=
     fn f => fn list =>
         let
-            fun equivalenceClasses_helper inner_list last_element =
+            fun equivalenceClasses_helper inner_list last_element count =
                 case inner_list of
                     [] => []
-                    | head::tail => 
-                        if head = last_element then
-                            equivalenceClasses_helper tail head
+                    | head::tail =>
+                        if count = 0 then
+                            List.filter (fn x => f x head) inner_list :: equivalenceClasses_helper tail head (count + 1)
+                        else if head = last_element then
+                            equivalenceClasses_helper tail head (count + 1)
                         else
-                            List.filter (fn x => f x head) inner_list :: equivalenceClasses_helper tail head
+                            List.filter (fn x => f x head) inner_list :: equivalenceClasses_helper tail head (count + 1)
                         
         in
-            equivalenceClasses_helper list (List.last list)
+            case list of
+                [] => []
+                | _ => equivalenceClasses_helper list (hd list) 0
         end
 
 val equivalenceClasses_result = equivalenceClasses (fn x => fn y => x = y) ["1", "1", "1", "3", "3", "2"];
