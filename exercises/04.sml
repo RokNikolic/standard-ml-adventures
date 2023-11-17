@@ -120,7 +120,7 @@ val group : ''a list -> (''a * int) list =
 val group_result = group ["1", "1", "1", "3", "3", "2"];
 
 (* Sorts the elements from a list into equivalence classes. The equivalence relation is given with a function f, which returns true, if two elements are equivalent. *)
-val equivalenceClasses : ('a -> 'a -> bool) -> 'a list -> 'a list list=
+val equivalenceClasses =
     fn f => fn list =>
         let
             fun equivalenceClasses_helper inner_list last_element count =
