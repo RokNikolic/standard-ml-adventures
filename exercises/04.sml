@@ -86,9 +86,12 @@ val dot_result = dot [2, 3, 4, 5] [1, 6, 9, 3];
 (* Transpose of matrix *)
 val rec transpose : 'a list list -> 'a list list =
     fn matrix =>
-        case List.nth(matrix, 0) of
-            [] => []
-            | _ => List.map (fn row => hd row) matrix :: transpose (List.map (fn row => tl row) matrix)
+        case matrix of 
+        [] => []
+        | _=> case hd matrix of
+                [] => []
+                | _ => List.map (fn row => hd row) matrix :: transpose (List.map (fn row => tl row) matrix)
+        
 
 val transpose_result = transpose [[1,2],[4,5],[7,8]];
 

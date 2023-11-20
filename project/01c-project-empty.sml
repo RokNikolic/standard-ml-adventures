@@ -12,36 +12,6 @@ val y = "Y,}*a@F^d'=1$e:g!n&x:L}U9(y8on+x+a:N2ym0 mQn+o#a)aaO4l+<Y,}*a@F^P#q]/lJ
 val alphabet = "\n !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
 
 
-
-signature RING =
-sig
-  eqtype t
-  val zero : t
-  val one : t
-  val neg : t -> t
-  val xGCD : t * t -> t * t * t
-  val inv : t -> t option
-  val + : t * t -> t
-  val * : t * t -> t
-end;
-
-functor Ring (val n : int) :> RING where type t = int =
-struct
-  type t = int
-  val zero = 0
-  val one = 1
-  fun neg x = ~x mod n
-  val xGCD = xGCD
-  
-  fun inv x =
-    case xGCD (x mod n, n) of
-      (1, s, _) => SOME (s mod n)
-    | _ => NONE
-
-  fun op + a =  Int.+ a mod n
-  fun op * p =  Int.* p mod n
-end;
-
 signature MAT =
 sig
   eqtype t
