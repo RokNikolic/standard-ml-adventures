@@ -3,6 +3,15 @@ val _ = Control.Print.printLength := 10;
 val _ = Control.Print.stringDepth := 2000;
 val _ = Control.polyEqWarn := false;
 
+(* usefull for making unit tests *)
+fun readFile filename =
+  let val is = TextIO.openIn filename
+  in 
+    String.map (fn c => if Char.isGraph c orelse c = #" " orelse c = #"\n" then c else #" ")
+      (TextIO.inputAll is)
+    before TextIO.closeIn is
+  end;
+
 fun split blockSize list = 
     let 
         fun split_helper inner_list accumulated_list count =
@@ -87,7 +96,7 @@ struct
         fun add list1 list2 = ListPair.map R.+ (list1, list2)
         fun sub list1 list2 = ListPair.map (fn (x, y) => R.+(x, (R.neg y))) (list1, list2)
         fun scale scalar list1 = List.map (fn x => R.*(x, scalar)) list1
-    end
+    end;
 
     fun tr matrix =
         case matrix of 
@@ -96,12 +105,45 @@ struct
                 [] => []
                 | _ => List.map (fn row => hd row) matrix :: tr (List.map (fn row => tl row) matrix)
 
-    fun mul matrix1 matrix2 = List.map (fn rows => List.map (fn columns => Vec.dot rows columns) (tr matrix2)) matrix1
+    fun mul matrix1 matrix2 = List.map (fn rows => List.map (fn columns => Vec.dot rows columns) (tr matrix2)) matrix1;
 
-    fun id size = raise NotImplemented
-    fun join _ _ = raise NotImplemented
-    fun inv _ = raise NotImplemented
+    fun id size = 
+        let
+            fun row i = 
+                List.tabulate (size, fn j => if i = j then R.one else R.zero);
+        in
+            List.tabulate (size, row)
+        end;
+
+    fun join matrix1 matrix2 = 
+        case matrix1 of
+            [] => matrix2
+            | _ => case matrix2 of 
+                [] => matrix1
+                | _ => ListPair.map (fn (x, y) => x @ y) (matrix1, matrix2)
+
+    fun reduce v m = List.map (fn (x :: u) => Vec.sub u (Vec.scale x v) | _ => raise Empty) m
+
+    fun pivot ((v as x :: _) :: m) =
+        (case R.inv x of
+        SOME x1 => SOME (Vec.scale x1 v :: m)
+        | NONE =>
+            case m of
+                ((u as y :: _) :: m2) =>
+                    let val (g, s, t) = R.xGCD (x, y) in
+                        case pivot (Vec.add (Vec.scale s v) (Vec.scale t u) :: m2) of
+                            SOME (w :: m3) => SOME (w :: u :: v :: m3)
+                        | _ => NONE
+                    end    
+                | _ => NONE)
+        | pivot _ = NONE
+
+    fun gauss (above, []) = SOME above
+    |   gauss (above, below) =
+            case pivot below of
+                SOME ((_ :: v) :: m) => gauss (reduce v above @ [v], List.filter (fn z => List.exists (fn x => x <> R.zero) z) (reduce v m))
+            |   _ => NONE
+
+    fun inv matrix = gauss ([], (join matrix (id (List.length matrix))))
+
 end;
-
-structure M = Mat (Ring (val n = 27));
-
