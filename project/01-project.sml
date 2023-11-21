@@ -3,7 +3,8 @@ val _ = Control.Print.printLength := 10;
 val _ = Control.Print.stringDepth := 2000;
 val _ = Control.polyEqWarn := false;
 
-(* usefull for making unit tests *)
+val alphabet = "\n !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
+
 fun readFile filename =
   let val is = TextIO.openIn filename
   in 
@@ -146,4 +147,36 @@ struct
 
     fun inv matrix = gauss ([], (join matrix (id (List.length matrix))))
 
+end;
+
+signature CIPHER =
+sig
+  type t
+  val encrypt : t list list -> t list -> t list
+  val decrypt : t list list -> t list -> t list option
+  val knownPlaintextAttack : int -> t list -> t list -> t list list option
+end;
+
+functor HillCipherAnalyzer (M : MAT) :> CIPHER where type t = M.t =
+struct
+    type t = M.t
+    
+    fun encrypt key plaintext =
+        let
+            val split_text = split (List.length key) plaintext
+        in
+            List.concat (List.map (fn portion => hd (M.mul [portion] key)) split_text)
+        end
+                
+    fun decrypt key ciphertext = 
+        let
+            val split_text = split (List.length key) ciphertext
+            val inversed_key = M.inv key
+        in
+            case inversed_key of
+                NONE => NONE
+                | SOME i_key => SOME (List.concat (List.map (fn portion => hd (M.mul [portion] i_key)) split_text))
+        end
+
+    fun knownPlaintextAttack keyLenght plaintext ciphertext = raise NotImplemented
 end;
