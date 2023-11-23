@@ -3,15 +3,7 @@ val _ = Control.Print.printLength := 10;
 val _ = Control.Print.stringDepth := 2000;
 val _ = Control.polyEqWarn := false;
 
-val alphabet = "\n !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
-
-fun readFile filename =
-  let val is = TextIO.openIn filename
-  in 
-    String.map (fn c => if Char.isGraph c orelse c = #" " orelse c = #"\n" then c else #" ")
-      (TextIO.inputAll is)
-    before TextIO.closeIn is
-  end;
+val alphabet = "\n !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 
 fun split blockSize list = 
     let 
@@ -224,4 +216,22 @@ struct
             end
         end
 
+end;
+
+structure Trie :> 
+sig
+eqtype ''a dict
+val empty : ''a dict
+val insert : ''a list -> ''a dict -> ''a dict
+val lookup : ''a list -> ''a dict -> bool
+end
+=
+struct
+  datatype ''a tree = N of ''a * bool * ''a tree list
+  type ''a dict = ''a tree list
+
+  val empty = [] : ''a dict
+
+  fun insert w dict = raise NotImplemented
+  fun lookup w dict = raise NotImplemented
 end;
