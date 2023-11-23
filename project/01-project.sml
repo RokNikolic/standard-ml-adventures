@@ -149,6 +149,14 @@ struct
 
 end;
 
+fun get_elements number list =
+    if number = 0 then
+        []
+    else 
+        case list of 
+            [] => []
+            | head::tail => head :: get_elements (number - 1) tail
+
 signature CIPHER =
 sig
   type t
@@ -178,5 +186,42 @@ struct
                 | SOME i_key => SOME (List.concat (List.map (fn portion => hd (M.mul [portion] i_key)) split_text))
         end
 
-    fun knownPlaintextAttack keyLenght plaintext ciphertext = raise NotImplemented
+    fun knownPlaintextAttack keyLenght plaintext ciphertext = 
+        let
+            val split_plain = split (keyLenght) plaintext
+            val split_cipher = split (keyLenght) ciphertext
+
+            fun knownPlaintextAttack_helper count =
+                let
+                    val x = get_elements (keyLenght + count) split_plain
+                    val y = get_elements (keyLenght + count) split_cipher
+                    val x2 = M.mul (M.tr x) x
+                    val y2 = M.mul (M.tr x) y
+                in  
+                    if (keyLenght + count) > (List.length split_cipher) then
+                        NONE
+                    else
+                        if count = 0 then
+                            case M.inv x of
+                                NONE => knownPlaintextAttack_helper (count + 1)
+                                | SOME inv_of_x => SOME (M.mul inv_of_x y)
+                        else
+                            case M.inv x2 of
+                                NONE => knownPlaintextAttack_helper (count + 1)
+                                | SOME inv_of_x2 => SOME (M.mul inv_of_x2 y2)
+                end
+        in
+            let
+                val found_key = knownPlaintextAttack_helper 0
+            in
+                case found_key of
+                    NONE => NONE
+                    | SOME key => 
+                        if (encrypt key plaintext) = ciphertext then
+                            SOME key
+                        else
+                            NONE
+            end
+        end
+
 end;
