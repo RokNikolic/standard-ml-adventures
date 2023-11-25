@@ -1,6 +1,6 @@
-val _ = Control.Print.printDepth := 10;
-val _ = Control.Print.printLength := 10;
-val _ = Control.Print.stringDepth := 2000;
+val _ = Control.Print.printDepth := 100;
+val _ = Control.Print.printLength := 100;
+val _ = Control.Print.stringDepth := 20000;
 val _ = Control.polyEqWarn := false;
 
 val alphabet = "\n !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
@@ -220,18 +220,47 @@ end;
 
 structure Trie :> 
 sig
-eqtype ''a dict
-val empty : ''a dict
-val insert : ''a list -> ''a dict -> ''a dict
-val lookup : ''a list -> ''a dict -> bool
+    eqtype ''a dict
+    val empty : ''a dict
+    val insert : ''a list -> ''a dict -> ''a dict
+    val lookup : ''a list -> ''a dict -> bool
 end
 =
 struct
-  datatype ''a tree = N of ''a * bool * ''a tree list
-  type ''a dict = ''a tree list
+    datatype ''a tree = N of ''a * bool * ''a tree list
+    type ''a dict = ''a tree list
 
-  val empty = [] : ''a dict
+    val empty = [] : ''a dict
 
-  fun insert w dict = raise NotImplemented
-  fun lookup w dict = raise NotImplemented
+    fun insert word dict =       
+        case word of
+                [] => dict
+                | word_head :: word_tail =>
+                    case dict of
+                        [] => 
+                            if word_tail = [] then
+                                [N (word_head, true, empty)]
+                            else 
+                                [N (word_head, false, (insert word_tail empty))]
+                        | N (letter, bool, sub_dict) :: tail_dict => 
+                            if word_head = letter then
+                                N (letter, word_tail = [], (insert word_tail sub_dict)) :: tail_dict
+                            else
+                                N (letter, bool, sub_dict) :: (insert word tail_dict)
+
+    fun lookup word dict = 
+        case word of
+                [] => false
+                | word_head :: word_tail =>
+                    case dict of
+                        [] => false
+                        | N (letter, bool, sub_dict) :: tail_dict => 
+                            if word_head = letter then
+                                if word_tail = [] then
+                                    bool
+                                else
+                                    lookup word_tail sub_dict
+                            else
+                                lookup word tail_dict
+
 end;
