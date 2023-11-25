@@ -3,8 +3,6 @@ val _ = Control.Print.printLength := 100;
 val _ = Control.Print.stringDepth := 20000;
 val _ = Control.polyEqWarn := false;
 
-val alphabet = "\n !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-
 fun split blockSize list = 
     let 
         fun split_helper inner_list accumulated_list count =
@@ -263,4 +261,55 @@ struct
                             else
                                 lookup word tail_dict
 
+end;
+
+val alphabet = "\n !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+
+signature HILLCIPHER =
+sig
+    structure Ring : RING where type t = int
+    structure Matrix : MAT where type t = Ring.t
+    structure Cipher : CIPHER where type t = Matrix.t
+    val alphabetSize : int
+    val alphabet : char list
+    val encode : string -> Cipher.t list
+    val decode : Cipher.t list -> string
+    val encrypt : Cipher.t list list -> string -> string
+    val decrypt : Cipher.t list list -> string -> string option
+    val knownPlaintextAttack :
+        int -> string -> string -> Cipher.t list list option
+    val ciphertextOnlyAttack : int -> string -> Cipher.t list list option
+end
+
+functor HillCipher (val alphabet : string) :> HILLCIPHER =
+struct
+val alphabetSize = String.size alphabet
+val alphabet = String.explode alphabet
+
+structure Ring = Ring (val n = alphabetSize)
+structure Matrix = Mat (Ring)
+structure Cipher = HillCipherAnalyzer (Matrix)
+
+fun encode txt = raise NotImplemented
+fun decode code = raise NotImplemented
+
+local
+  fun parseWords filename =
+    let val is = TextIO.openIn filename
+      fun read_lines is =
+        case TextIO.inputLine is of
+          SOME line =>
+            if String.size line > 1
+            then String.tokens (not o Char.isAlpha) line @ read_lines is
+            else read_lines is
+          | NONE => []
+    in List.map (String.map Char.toLower) (read_lines is) before TextIO.closeIn is end
+
+  val dictionary = List.foldl (fn (w, d) => Trie.insert w d) Trie.empty (List.map String.explode (parseWords "hamlet.txt")) handle NotImplemented => Trie.empty
+in
+    fun encrypt key plaintext = raise NotImplemented
+    fun decrypt key ciphertext = raise NotImplemented
+    fun knownPlaintextAttack keyLenght plaintext ciphertext = raise NotImplemented
+    fun ciphertextOnlyAttack keyLenght ciphertext = raise NotImplemented
+    end
 end;
