@@ -3,6 +3,16 @@ val _ = Control.Print.printLength := 100;
 val _ = Control.Print.stringDepth := 20000;
 val _ = Control.polyEqWarn := false;
 
+exception NotImplemented;
+
+fun readFile filename =
+  let val is = TextIO.openIn filename
+  in 
+    String.map (fn c => if Char.isGraph c orelse c = #" " orelse c = #"\n" then c else #" ")
+      (TextIO.inputAll is)
+    before TextIO.closeIn is
+  end
+
 fun split blockSize list = 
     let 
         fun split_helper inner_list accumulated_list count =
@@ -139,14 +149,6 @@ struct
 
 end;
 
-fun get_elements number list =
-    if number = 0 then
-        []
-    else 
-        case list of 
-            [] => []
-            | head::tail => head :: get_elements (number - 1) tail
-
 signature CIPHER =
 sig
   type t
@@ -164,7 +166,7 @@ struct
             val split_text = split (List.length key) plaintext
         in
             List.concat (List.map (fn portion => hd (M.mul [portion] key)) split_text)
-        end
+        end;
                 
     fun decrypt key ciphertext = 
         let
@@ -175,6 +177,14 @@ struct
                 NONE => NONE
                 | SOME i_key => SOME (List.concat (List.map (fn portion => hd (M.mul [portion] i_key)) split_text))
         end
+    
+    fun get_elements number list =
+        if number = 0 then
+            []
+        else 
+            case list of 
+                [] => []
+                | head::tail => head :: get_elements (number - 1) tail;
 
     fun knownPlaintextAttack keyLenght plaintext ciphertext = 
         let
@@ -222,9 +232,9 @@ sig
     val empty : ''a dict
     val insert : ''a list -> ''a dict -> ''a dict
     val lookup : ''a list -> ''a dict -> bool
-end
+  end
 =
-struct
+  struct
     datatype ''a tree = N of ''a * bool * ''a tree list
     type ''a dict = ''a tree list
 
@@ -232,66 +242,75 @@ struct
 
     fun insert word dict =       
         case word of
-                [] => dict
-                | word_head :: word_tail =>
-                    case dict of
-                        [] => 
-                            if word_tail = [] then
-                                [N (word_head, true, empty)]
-                            else 
-                                [N (word_head, false, (insert word_tail empty))]
-                        | N (letter, bool, sub_dict) :: tail_dict => 
-                            if word_head = letter then
-                                N (letter, word_tail = [], (insert word_tail sub_dict)) :: tail_dict
-                            else
-                                N (letter, bool, sub_dict) :: (insert word tail_dict)
+            [] => dict
+            | word_head :: word_tail =>
+                case dict of
+                    [] => 
+                        if word_tail = [] then
+                            [N (word_head, true, empty)]
+                        else 
+                            [N (word_head, false, (insert word_tail empty))]
+                    | N (letter, bool, sub_dict) :: tail_dict => 
+                        if word_head = letter then
+                            N (letter, word_tail = [], (insert word_tail sub_dict)) :: tail_dict
+                        else
+                            N (letter, bool, sub_dict) :: (insert word tail_dict);
 
     fun lookup word dict = 
         case word of
-                [] => false
-                | word_head :: word_tail =>
-                    case dict of
-                        [] => false
-                        | N (letter, bool, sub_dict) :: tail_dict => 
-                            if word_head = letter then
-                                if word_tail = [] then
-                                    bool
-                                else
-                                    lookup word_tail sub_dict
+            [] => false
+            | word_head :: word_tail =>
+                case dict of
+                    [] => false
+                    | N (letter, bool, sub_dict) :: tail_dict => 
+                        if word_head = letter then
+                            if word_tail = [] then
+                                bool
                             else
-                                lookup word tail_dict
+                                lookup word_tail sub_dict
+                        else
+                            lookup word tail_dict;
 
-end;
-
-val alphabet = "\n !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+  end;
 
 signature HILLCIPHER =
 sig
-    structure Ring : RING where type t = int
-    structure Matrix : MAT where type t = Ring.t
-    structure Cipher : CIPHER where type t = Matrix.t
-    val alphabetSize : int
-    val alphabet : char list
-    val encode : string -> Cipher.t list
-    val decode : Cipher.t list -> string
-    val encrypt : Cipher.t list list -> string -> string
-    val decrypt : Cipher.t list list -> string -> string option
-    val knownPlaintextAttack :
-        int -> string -> string -> Cipher.t list list option
-    val ciphertextOnlyAttack : int -> string -> Cipher.t list list option
-end
+  structure Ring : RING where type t = int
+  structure Matrix : MAT where type t = Ring.t
+  structure Cipher : CIPHER where type t = Matrix.t
+  val alphabetSize : int
+  val alphabet : char list
+  val encode : string -> Cipher.t list
+  val decode : Cipher.t list -> string
+  val encrypt : Cipher.t list list -> string -> string
+  val decrypt : Cipher.t list list -> string -> string option
+  val knownPlaintextAttack :
+      int -> string -> string -> Cipher.t list list option
+  val ciphertextOnlyAttack : int -> string -> Cipher.t list list option
+end;
 
 functor HillCipher (val alphabet : string) :> HILLCIPHER =
 struct
-val alphabetSize = String.size alphabet
-val alphabet = String.explode alphabet
 
-structure Ring = Ring (val n = alphabetSize)
-structure Matrix = Mat (Ring)
-structure Cipher = HillCipherAnalyzer (Matrix)
+val alphabetSize = String.size alphabet;
+val alphabet = String.explode alphabet;
 
-fun encode txt = raise NotImplemented
-fun decode code = raise NotImplemented
+structure Ring = Ring (val n = alphabetSize);
+structure Matrix = Mat (Ring);
+structure Cipher = HillCipherAnalyzer (Matrix);
+
+exception NotInAlphabet;
+
+fun add_index_to_list list count =
+    case list of
+        [] => []
+        | head::tail => (head, count) :: (add_index_to_list tail (count + 1));
+
+val indexed_alphabet = add_index_to_list alphabet 0;
+
+fun encode txt = List.map (fn letter => case (List.find (fn a => letter = (#1 a)) indexed_alphabet) of NONE => raise NotInAlphabet | SOME (_, number) => number) (String.explode txt);
+
+fun decode code = String.implode (List.map (fn index => List.nth(alphabet, index)) code);
 
 local
   fun parseWords filename =
@@ -307,9 +326,12 @@ local
 
   val dictionary = List.foldl (fn (w, d) => Trie.insert w d) Trie.empty (List.map String.explode (parseWords "hamlet.txt")) handle NotImplemented => Trie.empty
 in
-    fun encrypt key plaintext = raise NotImplemented
-    fun decrypt key ciphertext = raise NotImplemented
-    fun knownPlaintextAttack keyLenght plaintext ciphertext = raise NotImplemented
+    fun encrypt key plaintext = decode (Cipher.encrypt key (encode plaintext))
+    fun decrypt key ciphertext = 
+        case (Cipher.decrypt key (encode ciphertext)) of
+            NONE => NONE
+            | SOME stuff => SOME (decode stuff)
+    fun knownPlaintextAttack keyLenght plaintext ciphertext = Cipher.knownPlaintextAttack keyLenght (encode plaintext) (encode ciphertext)
     fun ciphertextOnlyAttack keyLenght ciphertext = raise NotImplemented
     end
 end;
