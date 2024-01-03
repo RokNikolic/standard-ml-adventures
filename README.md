@@ -1,6 +1,6 @@
 # Standard-ML-adventures
-- Learning SML for the Functional Programming class at the University of Ljubljana, Faculty of Computer and Information Science.
+Learning SML for the Functional Programming class at university, includes: 
 
-- Implementing progressively harder concepts and problems in the ways of functional programming.
-
-- Extensively using recursion, polymorphism, higher order functions and currying.
+- Excercises implementing progressively harder concepts and problems with functional programming.
+- Using recursion, polymorphism, higher order functions and currying and more.
+- A project using all this knowledge to solve a cryptographic problem.
