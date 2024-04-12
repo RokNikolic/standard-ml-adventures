@@ -1,4 +1,4 @@
-# Standard-ML-adventures
+# Standard ML adventures
 Learning SML to learn functional programming concepts, includes: 
 
 - Excercises implementing progressively harder concepts with functional programming.
